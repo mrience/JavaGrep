@@ -1,0 +1,1 @@
+program checks if a word appears in a given text file
