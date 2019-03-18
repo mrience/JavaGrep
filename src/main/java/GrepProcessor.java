@@ -15,13 +15,13 @@ public class GrepProcessor {
     private List <String> wordsToCheckout;
     private String path;
     private URL url;
-    BufferedReader reader;
+    //private BufferedReader reader;
 
     GrepProcessor() {
     }
 
     public void process() {
-        System.out.println("Write path to Your file (starting file://)or webside address (starting http://) : ");
+        System.out.println("Write path to Your file (starting file://) or webside address (starting http:// or https://) : ");
             path = sc.nextLine();
         try {
             readInputAndCheckExtention(path);
@@ -29,7 +29,7 @@ public class GrepProcessor {
             e.printStackTrace();
         }
         wordsFromText = textToListMatcher(text);
-        System.out.println("write space separated wordsFromText to checkout (eg. lorem ipsum):");
+        System.out.println("write space separated words to checkout (eg. lorem ipsum):");
         inputWords = sc.nextLine();
         wordsToCheckout = Arrays.asList(inputWords.split(" "));
         for (String word : wordsToCheckout) {
@@ -77,17 +77,12 @@ public class GrepProcessor {
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
-        try {
-            reader = new BufferedReader(new InputStreamReader(url.openStream()));
+        try (
+                BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
+            ) {
             text = reader.lines().collect(Collectors.joining());
         } catch (IOException e) {
             e.printStackTrace();
-        } finally {
-            try {
-                reader.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
         }
     }
 
