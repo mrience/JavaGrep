@@ -3,17 +3,17 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.*;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class GrepProcessor {
     private Scanner sc = new Scanner(System.in);
-    private String word;
-    private List<String> words;
+    private String inputWords;
+    private List<String> wordsFromText;
     private int wordCounter;
     private File file;
     private String text = "";
+    private List <String> wordsToCheckout;
 
     public GrepProcessor() {
     }
@@ -26,14 +26,16 @@ public class GrepProcessor {
             e.printStackTrace();
         }
         getTextFromFile();
-        words = textToListMatcher(text);
-        System.out.println("write word to checkout:");
-        word = sc.nextLine();
-        if (text.contains(word)) {
-            wordCounter = Collections.frequency(words, word);
-            System.out.format("Word '%s' does appears in text %d times!", word, wordCounter);
+        wordsFromText = textToListMatcher(text);
+        System.out.println("write space separated wordsFromText to checkout (eg. lorem ipsum):");
+        inputWords = sc.nextLine();
+        wordsToCheckout = Arrays.asList(inputWords.split(" "));
+        for (String word : wordsToCheckout) {
+            if (text.contains(word)) {
+                wordCounter = Collections.frequency(wordsFromText, word);
+                System.out.format("Word '%s' does appears in text %d times!\n", word, wordCounter);
+            } else System.out.format("Word '%s' does not appear in text!\n", word);
         }
-        else System.out.format("Word '%s' does not appear in text!", word);
     }
 
     private List <String> textToListMatcher(String text) {
