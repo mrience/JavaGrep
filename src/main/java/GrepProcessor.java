@@ -1,7 +1,6 @@
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
+import java.io.*;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -14,18 +13,21 @@ public class GrepProcessor {
     private File file;
     private String text = "";
     private List <String> wordsToCheckout;
+    private String path;
+    private URL url;
+    BufferedReader reader;
 
-    public GrepProcessor() {
+    GrepProcessor() {
     }
 
-    void process() {
-        System.out.println("Write path to Your file: ");
+    public void process() {
+        System.out.println("Write path to Your file (starting file://)or webside address (starting http://) : ");
+            path = sc.nextLine();
         try {
-            readFileAndCheckExtention(sc.nextLine());
-        } catch (UnsupportedTypeException e) {
+            readInputAndCheckExtention(path);
+        } catch (UnsupportedTypeException | IncorrectPathException e) {
             e.printStackTrace();
         }
-        getTextFromFile();
         wordsFromText = textToListMatcher(text);
         System.out.println("write space separated wordsFromText to checkout (eg. lorem ipsum):");
         inputWords = sc.nextLine();
@@ -54,9 +56,39 @@ public class GrepProcessor {
         }
     }
 
-    private void readFileAndCheckExtention(String path) throws UnsupportedTypeException {
-        file = new File(path);
+    private void readInputAndCheckExtention(String path) throws UnsupportedTypeException, IncorrectPathException {
+        if (path.startsWith("file://")) {
+            readFile();
+        } else if (path.startsWith("http://") || path.startsWith("https://")) {
+            readWebsite();
+        } else throw new IncorrectPathException("Incorrect path!");
+    }
+
+    private void readFile() throws UnsupportedTypeException {
+        file = new File(path.replace("file://", ""));
         if (!file.getName().endsWith(".txt"))
             throw new UnsupportedTypeException("Type of file is not txt");
+        getTextFromFile();
     }
+
+    private void readWebsite() {
+        try {
+            url = new URL(path);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+        try {
+            reader = new BufferedReader(new InputStreamReader(url.openStream()));
+            text = reader.lines().collect(Collectors.joining());
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                reader.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
 }
