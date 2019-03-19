@@ -1,5 +1,5 @@
 package Reader;
 
 public interface Reader {
-    public String read();
+    public String read ();
 }

@@ -1,5 +1,5 @@
-import Reader.TextFileReader;
-import Reader.WebsiteReader;
+import Reader.Reader;
+import Reader.ReaderDecider;
 import exceptions.IncorrectPathException;
 
 import java.util.Collections;
@@ -16,14 +16,15 @@ public class GrepProcessor {
         System.out.println("Write path to your text file or website address (starting http:// or https://): ");
             String path = sc.nextLine();
         try {
-            text = readInputAndCheckExtention(path);
+            text = readInput(path);
         } catch (IncorrectPathException e) {
             e.printStackTrace();
             System.exit(1);
         }
         List<String> wordsFromText = matchTextToList(text);
         System.out.println("write space separated words to checkout (eg. lorem ipsum):");
-        List <String> wordsToCheckout = matchTextToList(sc.nextLine());
+        List<String> wordsToCheckout = matchTextToList(sc.nextLine());
+        sc.close();
         for (String word : wordsToCheckout) {
             if (text.contains(word)) {
                 int wordCounter = Collections.frequency(wordsFromText, word);
@@ -32,14 +33,9 @@ public class GrepProcessor {
         }
     }
 
-    private String readInputAndCheckExtention(String path) throws IncorrectPathException {
-        String text = null;
-        if (path.endsWith(".txt")) {
-            text = new TextFileReader(path).read();
-        } else if (path.startsWith("http://") || path.startsWith("https://")) {
-            text = new WebsiteReader(path).read();
-        } else throw new IncorrectPathException("Incorrect path!");
-        return text;
+    private String readInput(String path) throws IncorrectPathException {
+        Reader reader = new ReaderDecider().getReader(path);
+        return reader.read();
     }
 
     private List <String> matchTextToList(String text) {
