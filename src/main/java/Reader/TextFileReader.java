@@ -8,7 +8,7 @@ import java.util.Scanner;
 
 public class TextFileReader implements Reader {
     private String path;
-    private String text;
+    private StringBuilder text = new StringBuilder();
 
     public TextFileReader(String path) {
        this.path = path;
@@ -17,16 +17,15 @@ public class TextFileReader implements Reader {
     @Override
     public String read()  {
         File file = new File(path);
-        text = "";
         try  (
                 Scanner fileInput = new Scanner(new BufferedReader(new FileReader(file)));
         ) {
             while (fileInput.hasNext()) {
-                text = text.concat(fileInput.nextLine());
+                text.append(fileInput.nextLine());
             }
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-        return text;
+        return text.toString();
     }
 }

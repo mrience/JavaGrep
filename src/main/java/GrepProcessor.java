@@ -1,4 +1,3 @@
-import Reader.Reader;
 import Reader.ReaderDecider;
 import exceptions.IncorrectPathException;
 
@@ -34,8 +33,7 @@ public class GrepProcessor {
     }
 
     private String readInput(String path) throws IncorrectPathException {
-        Reader reader = new ReaderDecider().getReader(path);
-        return reader.read();
+        return new ReaderDecider().getReader(path).read();
     }
 
     private List <String> matchTextToList(String text) {
