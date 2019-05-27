@@ -1,1 +1,1 @@
-program checks if a word appears in a given text file or website html
+program checks number of appearances of a word in a given text file or website html
